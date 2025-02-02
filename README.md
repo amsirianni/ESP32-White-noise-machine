@@ -5,10 +5,14 @@ Simple ESP32 driven white noise machine to help baby sleep when away from home.
 
 We were heading away camping in the Australian summer with the baby and I wanted a simple, battery powered white noise machine to help the baby sleep. Because I was worried about temperature inside the tent, I decided to add a temp sensor into the project as well.
 
+![image](https://github.com/user-attachments/assets/498ef477-12e9-4799-b93f-66b66cef8f54)
+
+
+
 **Parts list**
 - [ESP32 WROOM devboard](https://www.aliexpress.com/item/1005008427958890.html?spm=a2g0o.productlist.main.1.fd221b32Ig66b0&algo_pvid=a2ca480d-d001-477d-af44-edd0bf3fee12&algo_exp_id=a2ca480d-d001-477d-af44-edd0bf3fee12-0&pdp_ext_f=%7B%22order%22%3A%223%22%2C%22eval%22%3A%221%22%7D&pdp_npi=4%40dis%21AUD%217.60%217.60%21%21%2133.94%2133.94%21%402101ef5e17384677574237827e808e%2112000045043969453%21sea%21AU%213925550392%21X&curPageLogUid=OUA6nqrHuLq2&utparam-url=scene%3Asearch%7Cquery_from%3A) 
 - [Rotary encoder with a button](https://www.aliexpress.com/item/1005005983134515.html?spm=a2g0o.productlist.main.2.29da493cIxTNrw&algo_pvid=22d5c367-740b-40a6-a480-146590cd85ec&algo_exp_id=22d5c367-740b-40a6-a480-146590cd85ec-1&pdp_ext_f=%7B%22order%22%3A%222127%22%2C%22eval%22%3A%221%22%7D&pdp_npi=4%40dis%21AUD%212.37%212.37%21%21%211.45%211.45%21%40210318c317384677941561605ef828%2112000035172713581%21sea%21AU%213925550392%21X&curPageLogUid=t6GK6qOg0d3x&utparam-url=scene%3Asearch%7Cquery_from%3A)
-- [3x LEDs (green, red and blue)](https://www.aliexpress.com/item/1005006898362384.html?spm=a2g0o.productlist.main.31.5325SgVXSgVXZO&algo_pvid=e7ca4462-f919-4cbe-b85e-2308339913fa&algo_exp_id=e7ca4462-f919-4cbe-b85e-2308339913fa-30&pdp_ext_f=%7B%22order%22%3A%221037%22%2C%22eval%22%3A%221%22%7D&pdp_npi=4%40dis%21AUD%213.22%211.80%21%21%2114.39%218.06%21%402103244817384679902276227e2332%2112000038654877159%21sea%21AU%213925550392%21X&curPageLogUid=AN6GOkI8X09c&utparam-url=scene%3Asearch%7Cquery_from%3A)
+- [3x 5mm LEDs (green, red and blue)](https://www.aliexpress.com/item/1005006898362384.html?spm=a2g0o.productlist.main.31.5325SgVXSgVXZO&algo_pvid=e7ca4462-f919-4cbe-b85e-2308339913fa&algo_exp_id=e7ca4462-f919-4cbe-b85e-2308339913fa-30&pdp_ext_f=%7B%22order%22%3A%221037%22%2C%22eval%22%3A%221%22%7D&pdp_npi=4%40dis%21AUD%213.22%211.80%21%21%2114.39%218.06%21%402103244817384679902276227e2332%2112000038654877159%21sea%21AU%213925550392%21X&curPageLogUid=AN6GOkI8X09c&utparam-url=scene%3Asearch%7Cquery_from%3A)
 - [bmp280 temp sensor](https://www.aliexpress.com/item/1005006330566170.html?spm=a2g0o.productlist.main.6.1ac864091DuBCP&algo_pvid=1fa82dbf-fbd0-45f3-82b9-c4c7da380617&algo_exp_id=1fa82dbf-fbd0-45f3-82b9-c4c7da380617-5&pdp_ext_f=%7B%22order%22%3A%221217%22%2C%22eval%22%3A%221%22%7D&pdp_npi=4%40dis%21AUD%212.53%211.62%21%21%2111.31%217.24%21%402103146c17384680248138590eb590%2112000036785983125%21sea%21AU%213925550392%21X&curPageLogUid=1iHpXsZcSdjF&utparam-url=scene%3Asearch%7Cquery_from%3A)
 - [Resistors (for the LEDs)](https://www.aliexpress.com/item/1005004933865451.html?spm=a2g0o.productlist.main.10.341d68e45Dle1H&algo_pvid=50a16363-f3cc-4b25-a1a5-33a8f7a1e0ed&algo_exp_id=50a16363-f3cc-4b25-a1a5-33a8f7a1e0ed-9&pdp_ext_f=%7B%22order%22%3A%224419%22%2C%22eval%22%3A%221%22%7D&pdp_npi=4%40dis%21AUD%213.99%213.99%21%21%212.44%212.44%21%40210312d517384680766247696efd60%2112000031069410692%21sea%21AU%213925550392%21X&curPageLogUid=GKIU0yKuGIT3&utparam-url=scene%3Asearch%7Cquery_from%3A)
 - [DFRobot MP3 player](https://www.aliexpress.com/item/4000379417594.html?spm=a2g0o.productlist.main.3.1a0f3fb9oawSXI&algo_pvid=3873160c-0bda-4b11-846d-5c59c0efacaf&algo_exp_id=3873160c-0bda-4b11-846d-5c59c0efacaf-2&pdp_ext_f=%7B%22order%22%3A%2213%22%2C%22eval%22%3A%221%22%7D&pdp_npi=4%40dis%21AUD%212.56%212.56%21%21%211.57%211.57%21%40210312d517384682090628289efd64%2110000001548721847%21sea%21AU%213925550392%21X&curPageLogUid=wfhLtlDhNwVi&utparam-url=scene%3Asearch%7Cquery_from%3A)
@@ -49,6 +53,7 @@ I made a simple 3D printed housing which isn't perfect, but helped me keep all t
 - [f3d (Fusion360 file)](https://github.com/amsirianni/White-noise-machine/blob/main/esp32%20white%20noise%20machine%20case%20v1.f3d)
 - [3mf](https://github.com/amsirianni/White-noise-machine/blob/main/esp32%20white%20noise%20machine%20case%20v1.3mf)
 
+![image](https://github.com/user-attachments/assets/bca7816c-e479-40c7-930c-545575266b8c)
 
 
 **Notes**

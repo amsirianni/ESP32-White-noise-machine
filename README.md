@@ -36,7 +36,9 @@ Prepare the memory card by (I followed this excellent tutorial on how to set up 
 
 **Code**
 
-The code has been uploaded, but here is a summary of what it is doing:
+Copy the [uploaded code](https://github.com/amsirianni/White-noise-machine/blob/main/code) to your project in the Arduino IDE (or code editor of your choice) and upload it to your device.
+
+Here is an overview of what the code is doing:
 - Rotary Encoder rotation is used to control the volume and the built in button is used to play and pause the white noise.
 - The BMP280 is monitoring temperature and that is used to drive the LEDs, which are used as quick indicators to see if the temperature is above/below or in the desired range.
 

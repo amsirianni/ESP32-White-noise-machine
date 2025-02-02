@@ -44,7 +44,7 @@ Copy the [uploaded code](https://github.com/amsirianni/White-noise-machine/blob/
 
 Here is an overview of what the code is doing:
 - Rotary Encoder rotation is used to control the volume and the built in button is used to play and pause the white noise.
-- The BMP280 is monitoring temperature and that is used to drive the LEDs, which are used as quick indicators to see if the temperature is above/below or in the desired range.
+- The LEDs are driven by the BME280, which powers the green LED when within the desired temperature range, the blue LED when the temp is below the range and red LED when temp is above the range. This provides a quick visual indicator if the temp is hot/cold/within-range for sleeping.
 
 **3D printed housing**
 

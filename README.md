@@ -44,9 +44,12 @@ Here is an overview of what the code is doing:
 
 **3D printed housing**
 
-I made a simple 3D printed housing which isn't perfect, but helped me keep all the pieces together while on the move. 
+I made a simple 3D printed housing which isn't perfect, but helped me keep all the pieces together while on the move. Note the fit is very tight, so requires a bit of force.
+- [STL](https://github.com/amsirianni/White-noise-machine/blob/main/esp32%20white%20noise%20machine%20case%20v1.stl)
+- [f3d (Fusion360 file)](https://github.com/amsirianni/White-noise-machine/blob/main/esp32%20white%20noise%20machine%20case%20v1.f3d)
+- [3mf](https://github.com/amsirianni/White-noise-machine/blob/main/esp32%20white%20noise%20machine%20case%20v1.3mf)
 
-I've included the STL and Fusion360 file if you'd like to use it/modify it.
+
 
 **Notes**
 - Because the BMP280 sensor is packaged in closely with the other electronics, I found the temperature readings were 2-4 degrees (celcius) warmer than the actual room temperature. I got around this by simply increasing my desired temperature range by 3 degrees. You can customise the temp range in the code.

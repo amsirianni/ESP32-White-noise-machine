@@ -1,0 +1,149 @@
+// ESP32 White noise machine
+
+#include "SoftwareSerial.h" 
+#include "DFRobotDFPlayerMini.h"
+#include <Wire.h>
+#include <SPI.h>
+#include <Adafruit_BMP280.h>
+
+// Define pins for rotary encoder and button
+#define ROTARY_CLOCK 26
+#define ROTARY_DATA 27
+#define ROTARY_BUTTON 14
+
+// Define pins for LEDs
+#define GREEN_LED 25
+#define RED_LED 33
+#define BLUE_LED 32
+
+// Define pins for BMP280 temp sensor
+#define BMP_SDA 21 
+#define BMP_SCL 22
+
+Adafruit_BMP280 bmp; 
+
+// Use pins 16 and 17 to communicate with DFPlayer Mini
+static const uint8_t PIN_MP3_TX = 16; // Connects to module's RX 
+static const uint8_t PIN_MP3_RX = 17; // Connects to module's TX 
+SoftwareSerial softwareSerial(PIN_MP3_RX, PIN_MP3_TX);
+
+// Create the Player object
+DFRobotDFPlayerMini player;
+
+volatile int rotary_lastStateClock = 0; // Store the previous state of the clock pin
+unsigned long rotary_lastTime = 0;     // Debounce timer for rotary encoder
+bool isPlaying = false;                 // Track playback state (initially paused)
+int currentVolume = 15;                // Track current volume
+unsigned long lastTemperaturePrintTime = 0; // millis() timestamp for last temperature print
+
+void setup() {
+
+  // Init USB serial port for debugging
+  Serial.begin(9600);
+  // Init serial port for DFPlayer Mini
+  softwareSerial.begin(9600);
+
+  // Set rotary encoder pins as input with pull-up resistors
+  pinMode(ROTARY_CLOCK, INPUT_PULLUP);
+  pinMode(ROTARY_DATA, INPUT_PULLUP);
+  pinMode(ROTARY_BUTTON, INPUT_PULLUP);
+
+  // Set LED pins as outputs
+  pinMode(GREEN_LED, OUTPUT);
+  pinMode(RED_LED, OUTPUT);
+  pinMode(BLUE_LED, OUTPUT);
+
+  // Begin I2C communication
+  Wire.begin(); 
+
+  // Start communication with BME280 sensor
+  if (!bmp.begin(0x76)) { 
+    Serial.println("Could not find a valid BMP280 sensor, check wiring!");
+    while (1);
+  }
+
+  // Start communication with DFPlayer Mini
+  if (player.begin(softwareSerial)) {
+    Serial.println("OK");
+
+    // Set initial volume 
+    player.volume(currentVolume); 
+  } else {
+    Serial.println("Connecting to DFPlayer Mini failed!");
+  }
+
+  /* Default settings from datasheet. */
+  bmp.setSampling(Adafruit_BMP280::MODE_NORMAL, 
+                  Adafruit_BMP280::SAMPLING_X2, 
+                  Adafruit_BMP280::SAMPLING_X16, 
+                  Adafruit_BMP280::FILTER_X16, 
+                  Adafruit_BMP280::STANDBY_MS_500); 
+}
+
+void loop() {
+  // Read the current state of the rotary encoder clock pin
+  int clockState = digitalRead(ROTARY_CLOCK);
+
+  // Read temperature
+  float temperature = bmp.readTemperature();
+
+  // LED Control based on temperature
+  if (temperature >= 22 && temperature <= 29) { 
+    digitalWrite(GREEN_LED, HIGH); 
+    digitalWrite(RED_LED, LOW); 
+    digitalWrite(BLUE_LED, LOW); 
+  } else if (temperature > 29) { 
+    digitalWrite(GREEN_LED, LOW); 
+    digitalWrite(RED_LED, HIGH); 
+    digitalWrite(BLUE_LED, LOW); 
+  } else { 
+    digitalWrite(GREEN_LED, LOW); 
+    digitalWrite(RED_LED, LOW); 
+    digitalWrite(BLUE_LED, HIGH); 
+  }
+
+  // Debounce rotary encoder rotation- you can adjust the times to increase responsiveness, but need to balance against debounce causing random values
+  if (clockState != rotary_lastStateClock && millis() - rotary_lastTime > 50) {
+    rotary_lastTime = millis();
+
+    // Check direction of rotation based on clock and data pin states
+    if (digitalRead(ROTARY_DATA) != clockState) {
+      // Clockwise rotation (increase volume)
+      currentVolume = constrain(currentVolume + 1, 0, 30); 
+    } else {
+      // Counter-clockwise rotation (decrease volume)
+      currentVolume = constrain(currentVolume - 1, 0, 30); 
+    }
+
+    // Set the new volume
+    player.volume(currentVolume); 
+
+    Serial.print("Volume: "); 
+    Serial.println(currentVolume); 
+  }
+
+  // Read the state of the rotary encoder button (debounce included)
+  if (digitalRead(ROTARY_BUTTON) == LOW && millis() - rotary_lastTime > 150) {
+    rotary_lastTime = millis();
+    isPlaying = !isPlaying; 
+
+    if (isPlaying) {
+      player.play(1); // Resume playback from the beginning 
+      Serial.println("Playing");
+    } else {
+      player.pause();
+      Serial.println("Paused");
+    }
+  }
+
+  // Print temperature every 5 seconds
+  if (millis() - lastTemperaturePrintTime >= 5000) { 
+    Serial.print("Temperature: ");
+    Serial.print(temperature);
+    Serial.println(" °C");
+    lastTemperaturePrintTime = millis(); 
+  }
+
+  // Update the last state for debouncing
+  rotary_lastStateClock = clockState;
+}
